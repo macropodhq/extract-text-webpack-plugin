@@ -284,8 +284,10 @@ ExtractTextPlugin.prototype.apply = function(compiler) {
 				if(extractedChunk.modules.length) {
 					extractedChunk.modules.sort(function(a, b) {
 						if(isInvalidOrder(a, b)) {
-							compilation.errors.push(new OrderUndefinedError(a.getOriginalModule()));
-							compilation.errors.push(new OrderUndefinedError(b.getOriginalModule()));
+							// https://github.com/webpack/extract-text-webpack-plugin/pull/81/files
+							var targetLog = options.relaxInvalidOrder ? compilation.warnings : compilation.errors;
+							targetLog.push(new OrderUndefinedError(a.getOriginalModule()));
+							targetLog.push(new OrderUndefinedError(b.getOriginalModule()));
 						}
 						return getOrder(a, b);
 					});
